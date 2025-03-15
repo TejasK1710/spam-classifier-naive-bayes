@@ -80,4 +80,34 @@ print(tokens)  # Should output: ['Hello', ',', 'how', 'are', 'you', '?']
 
 import nltk
 nltk.data.path.append('/root/nltk_data')
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.model_selection import train_test_split
+import pickle
+
+# Load preprocessed dataset
+df = pd.read_csv("preprocessed_spam.csv")
+
+# Initialize TF-IDF Vectorizer
+vectorizer = TfidfVectorizer(max_features=5000)  # Keep top 5000 important words
+
+# Convert text into numerical features
+X = vectorizer.fit_transform(df["processed_message"]).toarray()
+y = df["label"]  # Assuming 'label' column contains spam/ham (0 for ham, 1 for spam)
+
+# Split data into training and testing sets (80% train, 20% test)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Save TF-IDF model for future use
+with open("tfidf_vectorizer.pkl", "wb") as f:
+    pickle.dump(vectorizer, f)
+
+# Save training & testing data
+pd.DataFrame(X_train).to_csv("X_train.csv", index=False)
+pd.DataFrame(X_test).to_csv("X_test.csv", index=False)
+pd.DataFrame(y_train).to_csv("y_train.csv", index=False)
+pd.DataFrame(y_test).to_csv("y_test.csv", index=False)
+
+print("✅ Feature extraction completed! TF-IDF model and datasets saved.")
 
