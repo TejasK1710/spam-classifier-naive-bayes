@@ -110,4 +110,33 @@ pd.DataFrame(y_train).to_csv("y_train.csv", index=False)
 pd.DataFrame(y_test).to_csv("y_test.csv", index=False)
 
 print("✅ Feature extraction completed! TF-IDF model and datasets saved.")
+------------------------------------------------------------------------------------------------------------------------------------------------
+import pickle
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.metrics import accuracy_score, classification_report
 
+# Load the training and testing data
+X_train = pd.read_csv("X_train.csv").values
+X_test = pd.read_csv("X_test.csv").values
+y_train = pd.read_csv("y_train.csv").values.ravel()  # Convert to 1D array
+y_test = pd.read_csv("y_test.csv").values.ravel()
+
+# Train Naïve Bayes Model
+model = MultinomialNB()
+model.fit(X_train, y_train)
+
+# Make predictions
+y_pred = model.predict(X_test)
+
+# Evaluate the model
+accuracy = accuracy_score(y_test, y_pred)
+print(f"✅ Model Accuracy: {accuracy:.4f}")
+
+# Print classification report
+print("📊 Classification Report:\n", classification_report(y_test, y_pred))
+
+# Save the trained model
+with open("spam_classifier.pkl", "wb") as f:
+    pickle.dump(model, f)
+
+print("✅ Model training complete! Saved as 'spam_classifier.pkl'.")
