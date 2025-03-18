@@ -140,3 +140,36 @@ with open("spam_classifier.pkl", "wb") as f:
     pickle.dump(model, f)
 
 print("✅ Model training complete! Saved as 'spam_classifier.pkl'.")
+----------------------------------------------------------------------------------------------------------------------------------------
+import pickle
+import numpy as np
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+# Load the trained model and TF-IDF vectorizer
+with open("spam_classifier.pkl", "rb") as model_file:
+    model = pickle.load(model_file)
+
+with open("tfidf_vectorizer.pkl", "rb") as vectorizer_file:
+    vectorizer = pickle.load(vectorizer_file)
+
+# Function to predict if a message is spam or not
+def predict_message(message):
+    # Convert the message into a TF-IDF feature vector
+    message_tfidf = vectorizer.transform([message]).toarray()
+    
+    # Predict using the trained model
+    prediction = model.predict(message_tfidf)[0]
+    
+    # Display result
+    if prediction == 1:
+        print("🚨 Spam Message!")
+    else:
+        print("✅ Not Spam (Ham)")
+
+# Test the function
+while True:
+    user_message = input("\nEnter a message to check (or type 'exit' to quit): ")
+    if user_message.lower() == "exit":
+        break
+    predict_message(user_message)
+-------------------------------------------------------------------------------------------------------------------------
